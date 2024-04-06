@@ -1,0 +1,92 @@
+import numpy as np
+import pandas as pd
+
+# Generate sample historical price data
+np.random.seed(0)
+dates = pd.date_range(start='2022-01-01', end='2022-01-10')
+prices = pd.Series(np.random.normal(100, 10, len(dates)), index=dates)
+
+def mean_reversion_strategy(prices, window=5, buy_threshold=1.5, sell_threshold=-1.5):
+    """
+    Mean reversion trading strategy:
+    - Buy when the price drops below the rolling mean by the buy_threshold standard deviations.
+    - Sell when the price rises above the rolling mean by the sell_threshold standard deviations.
+    """
+    signals = pd.Series(index=prices.index)
+    rolling_mean = prices.rolling(window=window).mean()
+    rolling_std = prices.rolling(window=window).std()
+
+    for i in range(window, len(prices)):
+        if prices[i] < rolling_mean[i] - buy_threshold * rolling_std[i]:
+            signals[i] = 1  # Buy signal
+        elif prices[i] > rolling_mean[i] + sell_threshold * rolling_std[i]:
+            signals[i] = -1  # Sell signal
+        else:
+            signals[i] = 0  # No signal
+
+    return signals
+
+def backtest_strategy(prices, signals):
+    """
+    Backtests the trading strategy and calculates the cumulative returns.
+    """
+    positions = signals.shift(1)  # Enter positions one day after the signal
+    returns = positions * prices.pct_change()
+    cumulative_returns = (1 + returns).cumprod()
+    return cumulative_returns
+
+if __name__ == "__main__":
+    # Apply mean reversion strategy
+    signals = mean_reversion_strategy(prices)
+
+    # Backtest the strategy
+    cumulative_returns = backtest_strategy(prices, signals)
+
+    # Plot cumulative returns
+    cumulative_returns.plot(title="Mean Reversion Strategy Backtest")
+import numpy as np
+import pandas as pd
+
+# Generate sample historical price data
+np.random.seed(0)
+dates = pd.date_range(start='2022-01-01', end='2022-01-10')
+prices = pd.Series(np.random.normal(100, 10, len(dates)), index=dates)
+
+def mean_reversion_strategy(prices, window=5, buy_threshold=1.5, sell_threshold=-1.5):
+    """
+    Mean reversion trading strategy:
+    - Buy when the price drops below the rolling mean by the buy_threshold standard deviations.
+    - Sell when the price rises above the rolling mean by the sell_threshold standard deviations.
+    """
+    signals = pd.Series(index=prices.index)
+    rolling_mean = prices.rolling(window=window).mean()
+    rolling_std = prices.rolling(window=window).std()
+
+    for i in range(window, len(prices)):
+        if prices[i] < rolling_mean[i] - buy_threshold * rolling_std[i]:
+            signals[i] = 1  # Buy signal
+        elif prices[i] > rolling_mean[i] + sell_threshold * rolling_std[i]:
+            signals[i] = -1  # Sell signal
+        else:
+            signals[i] = 0  # No signal
+
+    return signals
+
+def backtest_strategy(prices, signals):
+    """
+    Backtests the trading strategy and calculates the cumulative returns.
+    """
+    positions = signals.shift(1)  # Enter positions one day after the signal
+    returns = positions * prices.pct_change()
+    cumulative_returns = (1 + returns).cumprod()
+    return cumulative_returns
+
+if __name__ == "__main__":
+    # Apply mean reversion strategy
+    signals = mean_reversion_strategy(prices)
+
+    # Backtest the strategy
+    cumulative_returns = backtest_strategy(prices, signals)
+
+    # Plot cumulative returns
+    cumulative_returns.plot(title="Mean Reversion Strategy Backtest")
